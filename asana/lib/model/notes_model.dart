@@ -5,5 +5,5 @@ class Note {
   String time;
   int image;
   bool isDon;
-  Note(this.id, this.subtitle, this.time, this.image, this.title, this.isDon);
+  Note(this.id, this.subtitle, this.time, this.image, this.title, this.isDon,);
 }

@@ -2,6 +2,8 @@ import 'package:asana/const/colors.dart';
 import 'package:asana/data/auth_data.dart';
 import 'package:flutter/material.dart';
 
+import '../ProfileScreen.dart';
+
 class LogIN_Screen extends StatefulWidget {
   final VoidCallback show;
   LogIN_Screen(this.show, {super.key});
@@ -19,15 +21,23 @@ class _LogIN_ScreenState extends State<LogIN_Screen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _focusNode1.addListener(() {
       setState(() {});
     });
-    super.initState();
     _focusNode2.addListener(() {
       setState(() {});
     });
+  }
+
+  @override
+  void dispose() {
+    // Nettoyez les contrôleurs et les focus nodes
+    email.dispose();
+    password.dispose();
+    _focusNode1.dispose();
+    _focusNode2.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,7 +57,7 @@ class _LogIN_ScreenState extends State<LogIN_Screen> {
               SizedBox(height: 8),
               account(),
               SizedBox(height: 20),
-              Login_bottom(),
+              Login_button(),
             ],
           ),
         ),
@@ -81,12 +91,20 @@ class _LogIN_ScreenState extends State<LogIN_Screen> {
     );
   }
 
-  Widget Login_bottom() {
+  Widget Login_button() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: GestureDetector(
         onTap: () {
-          AuthenticationRemote().login(email.text, password.text);
+          AuthenticationRemote().login(email.text, password.text).then((value) {
+            // Après connexion réussie, naviguez vers le ProfileScreen avec l'email
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ProfileScreen(),
+            ));
+          }).catchError((error) {
+            // Gérer les erreurs de connexion ici
+            print("Login failed: $error");
+          });
         },
         child: Container(
           alignment: Alignment.center,
@@ -158,7 +176,7 @@ class _LogIN_ScreenState extends State<LogIN_Screen> {
         decoration: BoxDecoration(
           color: backgroundColors,
           image: DecorationImage(
-            image: AssetImage('images/7.png'),
+            image: AssetImage('images/77.png'),
             fit: BoxFit.fitWidth,
           ),
         ),

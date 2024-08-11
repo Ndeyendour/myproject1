@@ -3,11 +3,11 @@ import 'package:asana/data/firestor.dart';
 import 'package:asana/model/notes_model.dart';
 import 'package:flutter/material.dart';
 
-
 // ignore: must_be_immutable
 class Edit_Screen extends StatefulWidget {
-  Note _note;
-  Edit_Screen(this._note, {super.key});
+  final Note note; // Change here: changed _note to note and removed taskId
+
+  Edit_Screen(this.note, {super.key});
 
   @override
   State<Edit_Screen> createState() => _Edit_ScreenState();
@@ -20,14 +20,15 @@ class _Edit_ScreenState extends State<Edit_Screen> {
   FocusNode _focusNode1 = FocusNode();
   FocusNode _focusNode2 = FocusNode();
   int indexx = 0;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    title = TextEditingController(text: widget._note.title);
-    subtitle = TextEditingController(text: widget._note.subtitle);
+    title = TextEditingController(text: widget.note.title);
+    subtitle = TextEditingController(text: widget.note.subtitle);
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: backgroundColors,
@@ -37,7 +38,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
           children: [
             title_widgets(),
             SizedBox(height: 20),
-            subtite_wedgite(),
+            subtitle_widget(),
             SizedBox(height: 20),
             imagess(),
             SizedBox(height: 20),
@@ -59,10 +60,14 @@ class _Edit_ScreenState extends State<Edit_Screen> {
           ),
           onPressed: () {
             Firestore_Datasource().Update_Note(
-                widget._note.id, indexx, title!.text, subtitle!.text);
+              widget.note.id,
+              indexx,
+              title!.text,
+              subtitle!.text,
+            );
             Navigator.pop(context);
           },
-          child: Text('add task'),
+          child: Text('Update task'),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -129,29 +134,29 @@ class _Edit_ScreenState extends State<Edit_Screen> {
           focusNode: _focusNode1,
           style: TextStyle(fontSize: 18, color: Colors.black),
           decoration: InputDecoration(
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-              hintText: 'title',
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: Color(0xffc5c5c5),
-                  width: 2.0,
-                ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            hintText: 'Title',
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(
+                color: Color(0xffc5c5c5),
+                width: 2.0,
               ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: custom_green,
-                  width: 2.0,
-                ),
-              )),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(
+                color: custom_green,
+                width: 2.0,
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Padding subtite_wedgite() {
+  Padding subtitle_widget() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: Container(
@@ -166,7 +171,7 @@ class _Edit_ScreenState extends State<Edit_Screen> {
           style: TextStyle(fontSize: 18, color: Colors.black),
           decoration: InputDecoration(
             contentPadding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-            hintText: 'subtitle',
+            hintText: 'Subtitle',
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(

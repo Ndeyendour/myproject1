@@ -1,28 +1,36 @@
 import 'package:asana/screen/SingUP.dart';
 import 'package:asana/screen/login.dart';
+import 'package:asana/screen/home.dart'; // Assurez-vous que le chemin est correct
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Auth_Page extends StatefulWidget {
-  Auth_Page({super.key});
-
-  @override
-  State<Auth_Page> createState() => _Auth_PageState();
-}
-
-class _Auth_PageState extends State<Auth_Page> {
-  bool a = true;
-  void to() {
-    setState(() {
-      a = !a;
-    });
-  }
-
+class Main_Page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    if (a) {
-      return LogIN_Screen(to);
-    } else {
-      return SignUp_Screen(to);
-    }
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasData) {
+          // Utilisez Home_Screen ici pour les utilisateurs connectés
+          return Home_Screen();
+        } else {
+          return LogIN_Screen(() => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SignUp_Screen(() {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LogIN_Screen(() {}),
+                      ),
+                    );
+                  }),
+                ),
+              ));
+        }
+      },
+    );
   }
 }
